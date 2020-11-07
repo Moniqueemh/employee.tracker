@@ -39,5 +39,60 @@ function main() {
                 "Update Employee Role?"
             ]
         }
-    ])
+    ]).then(function (answer) {
+        switch (answer.choice) {
+            case "Add Department?":
+                addDeparment();
+                break;
+
+            case "Add Role?":
+                addRole();
+                break;
+
+            case "Add Employee?":
+                addEmployee();
+                break;
+
+            case "View by Department?":
+                viewDepartment();
+                break;
+
+            case "View by Role?":
+                viewRole();
+                break;
+
+            case "View by Employee?":
+                viewEmployee();
+                break;
+
+            case "Update Employee Role?":
+                update();
+                break;
+
+            case "exit":
+                connection.end();
+                break;
+        }
+    });
 };
+
+function addDeparment() {
+    inquirer.prompt([
+        {
+            name: "name",
+            type: "input",
+            message: "Add a department."
+        }
+    ]).then(answers => {
+        connection.query(
+            "INSERT INTO department SET ?",
+            {
+            name: answers.name,
+            },
+            function (err, res) {
+                if (err) throw err
+                console.table(res.affectedRows + " was posted!\n");
+                startPrompt();
+            })
+    })
+}
