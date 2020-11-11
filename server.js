@@ -1,4 +1,4 @@
-const mysql = require("mysql");
+const mysql = require('mysql');
 const inquirer = require("inquirer");
 
 let connection = mysql.createConnection({
@@ -23,6 +23,7 @@ function main() {
     });
 };
 
+// prompt for choices//
 function main() {
     inquirer.prompt([
         {
@@ -76,6 +77,7 @@ function main() {
     });
 };
 
+// prompt for adding department//
 function addDeparment() {
     inquirer.prompt([
         {
@@ -83,16 +85,118 @@ function addDeparment() {
             type: "input",
             message: "Add a department."
         }
-    ]).then(answers => {
+    ]).then(res => {
         connection.query(
-            "INSERT INTO department SET ?",
+            "INSERT INTO department (department_name) VALUE ('Human Resources'),('Banking'),('IT Group')",
             {
-            name: answers.name,
+                name: res.department_name,
             },
             function (err, res) {
                 if (err) throw err
-                console.table(res.affectedRows + " was posted!\n");
+                console.table(res);
                 startPrompt();
             })
     })
-}
+};
+
+// prompt for add role//
+function addRole() {
+    connection.query("SELECT * FROM employee_db.employee_role")
+    inquirer.prompt([
+        {
+            name: "title",
+            type: "input",
+            message: "What is the title?"
+        },
+        {
+            name: "salary",
+            type: "input",
+            message: "What is the salary?"
+        },
+        {
+            name: "department_id",
+            type: "input",
+            message: "What is the id?"
+        }
+    ]).then(res => {
+        connection.query(
+            "INSERT INTO employee_role (title, salary, department_id) VALUE('Manager', 100000.00, 1)",
+            {
+                title: res.title,
+                salary: res.salary,
+                id: res.department_id
+            },
+            function (err, res) {
+                if (err) throw err
+                console.table(res);
+                startPrompt();
+            })
+    })
+};
+
+// prompt for adding employee//
+function addEmployee() {
+    connection.query("SELECT * FROM employee_db.employee")
+    inquirer.prompt([
+        {
+            name: "firstname",
+            type: "input",
+            message: "Enter first name."
+        },
+        {
+            name: "lastname",
+            type: "input",
+            message: "Enter last name."
+        },
+        {
+            name: "role_id",
+            type: "input",
+            message: "What is their role?"
+        },
+        {
+            name: "manager",
+            type: "list",
+            message: "Who is their manager?"
+            //choices : managerList()
+        }
+    ]).then(res => {
+        connection.query(
+            "INSERT INTO employee (first_name, last_name, role_id, manager_id)",
+            {
+                first_name: res.first_name,
+                last_name: res.last_name,
+                manager_id: res.manager_id,
+                role_id: res.role_id
+            },
+            function (err, res) {
+                if (err) throw err
+                console.table(res);
+                startPrompt();
+            })
+    })
+};
+
+// viewing department //
+function viewDepartment() {
+    connection.query("SELECT employee.first_name, employee.last_name, department.department_name AS Department FROM employee JOIN employee_role ON employee.role_id = employee_role.id JOIN department ON employee_role.department_id = department.id ORDER BY employee.id;",
+        function (err, res) {
+            if (err) throw err
+            console.table(res)
+            startPrompt()
+        })
+};
+
+//viewing role //
+function viewRole() {
+    connection.query("SELECT employee.first_name, employee.last_name, employee_role.title AS Title FROM employee JOIN employee_role ON employee.role_id = employee_role.id;",
+        function (err, res) {
+            if (err) throw err
+            console.table(res)
+            startPrompt()
+        })
+
+};
+
+
+
+

@@ -52,10 +52,13 @@ CREATE TABLE department
 
             INSERT INTO department
                 (department_name)
-            VALUES
-                ("Human Resources");
+            VALUE
+            ("Human Resources"),("Banking"),("IT Group");
 
             INSERT INTO employee_role
                 (title, salary, department_id)
-            VALUES
-                ("Manager", 100000.00, 1);
+            VALUE
+            ("Manager",
+            100000.00,
+            1
+            )
